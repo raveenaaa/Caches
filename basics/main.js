@@ -7,16 +7,19 @@ const fs = require('fs');
 // REDIS
 const redis = require('redis');
 let client = redis.createClient(6379, '127.0.0.1', {});
+const queue = 'recentSites';
 
 ///////////// GLOBAL HOOK
 
 // Add hook to make it easier to get all visited URLS.
-app.use(function (req, res, next) {
-  console.log(req.method, req.url);
+app.use(async function(request, response, next) {
+  console.log(request.method, request.url);
 
   // Task 2 ... INSERT HERE.
   // TODO: Store recent routes
-
+  await client.lpush(queue, [request.url]);
+  await client.ltrim(queue, 0, 4);
+  
   next(); // Passing the request to the next handler in the stack.
 });
 
@@ -30,12 +33,38 @@ app.get('/', function (req, res) {
 app.get('/test', function (req, res) {
   res.writeHead(200, { 'content-type': 'text/html' });
   res.write('test');
+  console.log('test');
   res.end();
 })
 
 // Task 1 ===========================================
-
 // TODO: Create two routes, `/get` and `/set`.
+// Route `/get`
+app.get('/get/:key', function(request, response) {
+  var key = request.params.key;
+  client.get(key, function(error, value){
+    var message;
+    if (value == null)
+      message = `The key '${key}' doesn't exists`;
+    else
+      message = `${key}:${value}`;
+
+    response.send(message);
+    console.log(message);
+  })
+})
+
+// Route `/set`
+app.get('/set/:key', function(request, response) {
+  var value = "this message will self-destruct in 10 seconds";
+  var key = request.params.key;
+
+  client.set(key, value, redis.print);
+  client.expire(request.params.key, 10);
+
+  response.send(`${key} has been set to: ${value}`);
+  console.log(`${key} has been set to: ${value}`);
+})
 
 // ===================================================
 
@@ -43,6 +72,23 @@ app.get('/test', function (req, res) {
 // Task 2 ============================================
 
 // TODO: Create a new route, `/recent`
+app.get('/recent', async function(request, response) {
+  let sites = ''
+  const recent = await client.lrange(queue, 0, -1, (err, data) => {
+    if (err) {
+     console.log(err);
+     response.status(500).send(err.message);
+     return;
+    }
+ 
+    data.forEach(site => {
+     sites += `${site}\n`;
+    });
+
+  console.log(sites);
+  response.send(sites);
+})
+})
 
 // ===================================================
 
