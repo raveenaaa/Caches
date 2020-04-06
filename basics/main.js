@@ -60,7 +60,7 @@ app.get('/set/:key', function(request, response) {
   var key = request.params.key;
 
   client.set(key, value, redis.print);
-  client.expire(request.params.key, 10);
+  client.expire(key, 10);
 
   response.send(`${key} has been set to: ${value}`);
   console.log(`${key} has been set to: ${value}`);
