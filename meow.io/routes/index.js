@@ -17,7 +17,7 @@ router.get('/', async function(req, res, next) {
       await client.lrange(cacheImages, 0, -1, async function(error, images){
         const uploads = images || await db.recentCats(5);
         if (images == null) {
-          console.log(chalk.keyword('orange')('...Reading Images from the DB');
+          console.log(chalk.keyword('orange')('...Reading Images from the DB'));
         }
         else {
           console.log(chalk.keyword('orange')('...Reading Images from the Cache'));
