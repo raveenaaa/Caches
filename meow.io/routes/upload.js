@@ -9,6 +9,7 @@ var express = require('express');
 var router = express.Router();
 
 const cacheImages = 'cacheImages';
+const imageQueue = 'imageQueue';
 
 /* GET users listing. */
 const upload = multer({ dest: './uploads/' })
@@ -25,8 +26,8 @@ router.post('/', upload.single('image'), function (req, res) {
       await client.lpush(cacheImages, [img]);
       await client.ltrim(cacheImages, 0, 4);
       
-      await db.cat(img);
-      res.send('Ok');
+      await client.rpush(imageQueue, [img]);
+      res.send('Image pushed to Redis Queue');
 
     });
   }
