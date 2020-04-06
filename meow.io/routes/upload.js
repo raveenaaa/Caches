@@ -1,5 +1,6 @@
 const multer = require('multer');
 const fs = require('fs');
+const chalk = require('chalk');
 
 const db = require('../data/db');
 const redis = require('redis');
@@ -15,8 +16,8 @@ const imageQueue = 'imageQueue';
 const upload = multer({ dest: './uploads/' })
 
 router.post('/', upload.single('image'), function (req, res) {
-  console.log(req.body) // form fields
-  console.log(req.file) // form files
+ // console.log(req.body) // form fields
+ // console.log(req.file) // form files
 
   if (req.file.fieldname === 'image') {
     fs.readFile(req.file.path, async function (err, data) {
@@ -27,7 +28,7 @@ router.post('/', upload.single('image'), function (req, res) {
       await client.ltrim(cacheImages, 0, 4);
       
       await client.rpush(imageQueue, [img]);
-      res.send('Image pushed to Redis Queue');
+      console.log(chalk.keyword('orange')('\n...Image pushed to Redis Queue'));
 
     });
   }
