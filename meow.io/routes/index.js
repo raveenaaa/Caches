@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var chalk = require('chalk');
 
 const redis = require('redis');
 let client = redis.createClient(6379, '127.0.0.1', {});
