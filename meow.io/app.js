@@ -30,6 +30,7 @@ app.use('/', indexRouter);
 app.use('/upload', uploadRouter);
 app.use('/fact', factRouter);
 
+// TASK 5-------------------------------
 async function uploadToDB() {
   await client.lpop(imageQueue, async function(error, image) {
     if (image != null){
@@ -40,6 +41,7 @@ async function uploadToDB() {
 }
 
 setInterval(uploadToDB, 100);
+// TASK 5 END----------------------------
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

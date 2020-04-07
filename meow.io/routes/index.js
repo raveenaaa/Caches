@@ -12,6 +12,7 @@ const cacheImages = 'cacheImages';
 /* GET home page. */
 router.get('/', async function(req, res, next) {
 
+  // TASK 3 & TASK 4 ----------------------------------------
   await client.get(cacheFacts, async function(err, facts) {
 
       await client.lrange(cacheImages, 0, -1, async function(error, images){

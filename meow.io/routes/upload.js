@@ -9,7 +9,10 @@ const client = redis.createClient(6379, '127.0.0.1', {});
 var express = require('express');
 var router = express.Router();
 
+// TASK 4 ------------------
 const cacheImages = 'cacheImages';
+
+// TASK 5 ------------------
 const imageQueue = 'imageQueue';
 
 /* GET users listing. */
@@ -23,13 +26,17 @@ router.post('/', upload.single('image'), function (req, res) {
     fs.readFile(req.file.path, async function (err, data) {
       if (err) throw err;
       var img = new Buffer(data).toString('base64');
-
+      
+      // TASK 4----------------------
       await client.lpush(cacheImages, [img]);
       await client.ltrim(cacheImages, 0, 4);
+      // await db.cat(img);
       
+      // TASK 5----------------------
       await client.rpush(imageQueue, [img]);
-      console.log(chalk.keyword('orange')('\n...Image pushed to Redis Queue'));
 
+      console.log(chalk.keyword('orange')('\n...Image pushed to Redis Queue'));
+      res.send('Image pushed to Redis Queue');
     });
   }
 });
