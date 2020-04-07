@@ -24,7 +24,7 @@ Inside the VM, go to the sync folder containing this repo and install npm depend
   npm install
   ```
 
-#### Task 1: An expiring cache
+### Task 1: An expiring cache
 
 We create two routes, `/get` and `/set`.
 
@@ -35,7 +35,7 @@ Use the [EXPIRE](https://redis.io/commands/expire) command to make sure this key
 
 When [`/get`](http://192.168.44.81:3003/get) is visited (i.e. GET request), fetch that key, and send its value back to the client: `res.send(value)`.
 
-#### Task 2: Recent visited sites
+### Task 2: Recent visited sites
 
 We create a new route, `/recent`, which will display the most recently visited sites.
 
@@ -57,7 +57,7 @@ npm start
 
 You should be able to visit http://192.168.44.81:3000/
 
-#### Task 3: Cache best facts calculation
+### Task 3: Cache best facts calculation
 
 The front page will load all cat facts and display the 100 most voted facts on each page load.
 
@@ -79,7 +79,7 @@ real	0m47.018s
 
 Note: This is making an explicit trade-off between availability and consistency, since displayed data will be potentially 10 seconds behind real scores.
 
-#### Task 4: Cat picture uploads storage
+### Task 4: Cat picture uploads storage
  
 The front page will display the 5 most recently uploaded files (/upload).
 You can use curl to help you upload files easily for test.
@@ -117,23 +117,23 @@ $ time ./load.sh
 real	0m30.164s
 ```
 
-##### Task 5: Regulate uploads with queue
+### Task 5: Regulate uploads with queue
 
 If the application receives large volume of uploads faster that the database can handle perforance will be very poor.
 
 * We have modified the `meow.io/routes/upload.js` to store incoming images in a queue and not the database. 
 * We have then modified `meow.io/app.js` to pop images stored in the queue (consider using  [`LPOP`](https://redis.io/commands/lpop) ) and save in the database. This is done every 100ms using [setInveral()](https://javascript.info/settimeout-setinterval#setinterval). This way, we can take advantage of the faster write speed for redis and drain the queue at a steady rate for longer term storage.
 
-#### Conceptual Questions
+### Conceptual Questions
 
-1. Describe three desirable properties for infrastructure.
+__1. Describe three desirable properties for infrastructure.__
   * Availability: It means that the system or infrastructure should be able to provide services to the user when needed with no or limited iterruption.
   
   * Isolation: It means that if one component of the infrastructure is affected by some problem, the impact is confined to that component alone and it wouldn't bring the entire infrastructure down.
   
   * Scalability: It means that the system will be able to handle a growing amount of work by adding more resources to the system. It implies that the system can meet a growing demand from the users.
   
-2. Describe some benefits and issues related to using Load Balancers.
+__2. Describe some benefits and issues related to using Load Balancers.__
   * Benefits:
     -> They ensure availability.
     -> They mitigate single point of failure.
@@ -142,15 +142,15 @@ If the application receives large volume of uploads faster that the database can
   * Issues:
     -> Problems could arise if the load balancer itself goes down, but it is generally a low risk.
     
-3. What are some reasons for keeping servers in seperate availability zones?
+__3. What are some reasons for keeping servers in seperate availability zones?__
   * By keeping servers in separate availability zones we ensure isolation. If a particular zone is down then only servers in that region will go down.
   * This in turn increases the robustness of our system and ensures greater availability.
   
-4. Describe the Circuit Breaker and Bulkhead pattern.
+__4. Describe the Circuit Breaker and Bulkhead pattern.__
   * Circuit Breaker pattern: This pattern suggests that you need to wrap a protected function call in a `circuit breaker object`. This object will track the number of failures that occur. If that number exceeds a threshold, the circuit breaker will berak the connection to that protected function and all further calls to the curcuit breaker will be returned an error without calling the protected function at all.
   
   * Bulkhead pattern: They are a way to partition an application. They enable isolation through concrete enforceable resource limits. They effectively isolate components and protect from cascading failures through the enforcement of limits.
 
-#### Screencast
+### Screencast
 * https://drive.google.com/file/d/11lq2Bxqc4TbgfWXCoe3QIkPsfJQY_Hr4/view?usp=sharing
 
