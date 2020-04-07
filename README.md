@@ -135,11 +135,15 @@ __1. Describe three desirable properties for infrastructure.__
   
 __2. Describe some benefits and issues related to using Load Balancers.__
   * Benefits:
+  
     -> They ensure availability.
+    
     -> They mitigate single point of failure.
+    
     -> They ensure scalability.
     
   * Issues:
+  
     -> Problems could arise if the load balancer itself goes down, but it is generally a low risk.
     
 __3. What are some reasons for keeping servers in seperate availability zones?__
