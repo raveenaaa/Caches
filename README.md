@@ -3,7 +3,7 @@ HW3-Devops: Redis
 
 In this homework we try to understand the basic building blocks that form complex infrastructure is important for operating web-scale applications
 
-### Getting started
+#### Getting started
 
 * Clone [this repo](https://github.ncsu.edu/rmdcosta/HW3-DevOps.git) and change directory to the repo.
 * Pull `queues` virtual machine image which has nodejs and redis:
@@ -16,7 +16,7 @@ In this homework we try to understand the basic building blocks that form comple
   ```
 * Run `bakerx ssh queues` to connect to the virtual machine.
 
-### Basics
+#### Basics
 
 Inside the VM, go to the sync folder containing this repo and install npm dependencies:
   ```bash
@@ -24,7 +24,7 @@ Inside the VM, go to the sync folder containing this repo and install npm depend
   npm install
   ```
 
-##### Task 1: An expiring cache
+#### Task 1: An expiring cache
 
 We create two routes, `/get` and `/set`.
 
@@ -35,13 +35,13 @@ Use the [EXPIRE](https://redis.io/commands/expire) command to make sure this key
 
 When [`/get`](http://192.168.44.81:3003/get) is visited (i.e. GET request), fetch that key, and send its value back to the client: `res.send(value)`.
 
-##### Task 2: Recent visited sites
+#### Task 2: Recent visited sites
 
 We create a new route, `/recent`, which will display the most recently visited sites.
 
 We use [`LPUSH`](https://redis.io/commands/lpush), [`LTRIM`](https://redis.io/commands/ltrim), and[`LRANGE`](https://redis.io/commands/lrange) redis commands to store the most recent 5 sites visited, and return that to the client.
 
-## Meow.io
+#### Meow.io
 
 To run the application, perform the following steps:
 
@@ -57,7 +57,7 @@ npm start
 
 You should be able to visit http://192.168.44.81:3000/
 
-##### Task 3: Cache best facts calculation
+#### Task 3: Cache best facts calculation
 
 The front page will load all cat facts and display the 100 most voted facts on each page load.
 Without caching, this can add up with heavier traffic.
@@ -78,7 +78,7 @@ real	0m47.018s
 
 Note: This is making an explicit trade-off between availability and consistency, since displayed data will be potentially 10 seconds behind real scores.
 
-##### Task 4: Cat picture uploads storage
+#### Task 4: Cat picture uploads storage
  
 The front page will display the 5 most recently uploaded files (/upload).
 You can use curl to help you upload files easily for test.
@@ -113,4 +113,17 @@ If the application receives large volume of uploads faster that the database can
 
 * We have modified the `meow.io/routes/upload.js` to store incoming images in a queue and not the database. 
 * We have then modified `meow.io/app.js` to pop images stored in the queue (consider using  [`LPOP`](https://redis.io/commands/lpop) ) and save in the database. This is done every 100ms using [setInveral()](https://javascript.info/settimeout-setinterval#setinterval). This way, we can take advantage of the faster write speed for redis and drain the queue at a steady rate for longer term storage.
+
+#### Conceptual Questions
+
+1. Describe three desirable properties for infrastructure.
+
+2. Describe some benefits and issues related to using Load Balancers.
+
+3. What are some reasons for keeping servers in seperate availability zones?
+
+4. Describe the Circuit Breaker and Bulkhead pattern.
+
+#### Screencast
+* https://drive.google.com/file/d/11lq2Bxqc4TbgfWXCoe3QIkPsfJQY_Hr4/view?usp=sharing
 
