@@ -60,7 +60,8 @@ You should be able to visit http://192.168.44.81:3000/
 #### Task 3: Cache best facts calculation
 
 The front page will load all cat facts and display the 100 most voted facts on each page load.
-Without caching, this can add up with heavier traffic.
+
+__Without caching, this can add up with heavier traffic:__
 
 ```
 $ time ./load.sh 
@@ -68,7 +69,7 @@ $ time ./load.sh
 real	1m53.098s
 ```
 
-However, if we cache the results, we greatly reduce the load.
+__However, if we cache the results, we greatly reduce the load:__
 
 ```
 $ time ./load.sh 
@@ -82,7 +83,6 @@ Note: This is making an explicit trade-off between availability and consistency,
  
 The front page will display the 5 most recently uploaded files (/upload).
 You can use curl to help you upload files easily for test.
-
 ```bash
 curl -F "image=@./data/morning.jpg" http://localhost:3000/upload
 ```
@@ -91,16 +91,26 @@ However, this is being read from the database on each page load. You could inste
 
 we have modified the `meow.io/routes/upload.js` file to cache recently uploaded images. Modify the `meow.io/routes/index.js` to read from the cache instead the database.
 
-Without caching:
+We have also modified load.sh to upload some images to meow.io database:
+```bash
+#!/bin/bash
+for i in {1..50}
+do
+    
+    seq 1 10 | curl -F "image=@./data/i-scream.jpg" localhost:3000/upload
+    seq 5 11 | xargs -I {} -n1 -P4 curl -s localhost:3000/ >/dev/null
 
+done
+```
+
+__Response time without caching:__
 ```
 $ time ./load.sh 
 
 real	1m48.405s
 ```
 
-After caching:
-
+__After caching:__
 ```
 $ time ./load.sh 
 
@@ -117,12 +127,29 @@ If the application receives large volume of uploads faster that the database can
 #### Conceptual Questions
 
 1. Describe three desirable properties for infrastructure.
-
+  * Availability: It means that the system or infrastructure should be able to provide services to the user when needed with no or limited iterruption.
+  
+  * Isolation: It means that if one component of the infrastructure is affected by some problem, the impact is confined to that component alone and it wouldn't bring the entire infrastructure down.
+  
+  * Scalability: It means that the system will be able to handle a growing amount of work by adding more resources to the system. It implies that the system can meet a growing demand from the users.
+  
 2. Describe some benefits and issues related to using Load Balancers.
-
+  * Benefits:
+    -> They ensure availability.
+    -> They mitigate single point of failure.
+    -> They ensure scalability.
+    
+  * Issues:
+    -> Problems could arise if the load balancer itself goes down, but it is generally a low risk.
+    
 3. What are some reasons for keeping servers in seperate availability zones?
-
+  * By keeping servers in separate availability zones we ensure isolation. If a particular zone is down then only servers in that region will go down.
+  * This in turn increases the robustness of our system and ensures greater availability.
+  
 4. Describe the Circuit Breaker and Bulkhead pattern.
+  * Circuit Breaker pattern: This pattern suggests that you need to wrap a protected function call in a `circuit breaker object`. This object will track the number of failures that occur. If that number exceeds a threshold, the circuit breaker will berak the connection to that protected function and all further calls to the curcuit breaker will be returned an error without calling the protected function at all.
+  
+  * Bulkhead pattern: They are a way to partition an application. They enable isolation through concrete enforceable resource limits. They effectively isolate components and protect from cascading failures through the enforcement of limits.
 
 #### Screencast
 * https://drive.google.com/file/d/11lq2Bxqc4TbgfWXCoe3QIkPsfJQY_Hr4/view?usp=sharing
