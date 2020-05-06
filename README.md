@@ -1,7 +1,5 @@
-HW3-Devops: Redis
+Caching with Redis
 =========================
-
-In this homework we try to understand the basic building blocks that form complex infrastructure is important for operating web-scale applications
 
 #### Getting started
 
