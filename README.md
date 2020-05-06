@@ -3,7 +3,7 @@ Caching with Redis
 
 #### Getting started
 
-* Clone [this repo](https://github.ncsu.edu/rmdcosta/HW3-DevOps.git) and change directory to the repo.
+* Clone [this repo](https://github.com/raveenaaa/Caches.git) and change directory to the repo.
 * Pull `queues` virtual machine image which has nodejs and redis:
   ```
   bakerx pull CSC-DevOps/Images#Spring2020 queues
